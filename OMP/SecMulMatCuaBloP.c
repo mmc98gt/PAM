@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <omp.h>
 
 void compare_matrices(double *A, double *B, int n)
 {
@@ -38,26 +39,28 @@ void multiply_block(double *A, double *B, double *C, int n, int i, int j, int k,
 }
 
 // Función para multiplicar dos matrices utilizando un esquema por bloques
-void multiply_matrices(double *A, double *B, double *C, int n, int block_size)
+void multiply_matrices(double *A, double *B, double *C, int n, int block_size, int hilos)
 {
-    clock_t start = clock(); // Tiempo de inicio
     // Multiplicar las matrices por bloques
-    for (int i = 0; i < n; i += block_size)
+    double start_time = omp_get_wtime(); // Tiempo de inicio
+    int i, j, k;
+    #pragma omp parallel for collapse(3) schedule(static) num_threads(hilos)
+    for (i = 0; i < n; i += block_size)
     {
-        for (int j = 0; j < n; j += block_size)
+        for (j = 0; j < n; j += block_size)
         {
-            for (int k = 0; k < n; k += block_size)
+            for (k = 0; k < n; k += block_size)
             {
                 // Multiplicar el bloque de las matrices
                 multiply_block(A, B, C, n, i, j, k, block_size);
             }
         }
     }
-    clock_t end = clock(); // Tiempo de fin
-    double time_spent = (double)(end - start) / CLOCKS_PER_SEC * 1000; // Tiempo transcurrido en milisegundos
+    #pragma omp barrier
+    double end_time = omp_get_wtime(); // Tiempo de fin
+    double time_spent = (end_time - start_time) * 1000; // Tiempo transcurrido en milisegundos
     printf("Tiempo de ejecución: %f ms\n", time_spent);
 }
-
 
 void multiply_matrices_Seq(double *A, double *B, double *C, int n)
 {
@@ -80,7 +83,9 @@ int main(int argc, char *argv[])
     // Obtener la dimensión de la matriz y el tamaño del bloque a partir de los argumentos de la línea de comandos
     int n = atoi(argv[1]);
     int block_size = atoi(argv[2]);
-    if(n%block_size!=0)
+    int hilos = 1;
+    hilos = atoi(argv[3]);
+    if (n % block_size != 0)
     {
         printf("error tamaño de bloque no multiplo de la matriz");
         return -1;
@@ -100,9 +105,9 @@ int main(int argc, char *argv[])
     }
 
     // Multiplicar las matrices A y B y almacenar el resultado en C
-    multiply_matrices(A, B, C, n, block_size);
-    //multiply_matrices_Seq(A, B, C2, n);
-    //compare_matrices(C, C2, n);
+    multiply_matrices(A, B, C, n, block_size, hilos);
+    // multiply_matrices_Seq(A, B, C2, n);
+    // compare_matrices(C, C2, n);
 
     // Liberar la memoria
     free(A);
