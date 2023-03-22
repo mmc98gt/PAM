@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Tamaño de matriz
-N=4096
+N=2048
 
 # Tamaños de bloque
 block_sizes=(4 16 32)

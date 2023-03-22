@@ -112,8 +112,8 @@ int main(int argc, char *argv[])
 
     // Multiplicar las matrices A y B y almacenar el resultado en C
     multiply_matrices(A, B, C, m, n, k, block_size, hilos);
-    multiply_matrices_seq(A, B, C_seq, m, n, k);
-    compare_matrices(C, C_seq, m, n);
+    //multiply_matrices_seq(A, B, C_seq, m, n, k);
+    //compare_matrices(C, C_seq, m, n);
 
     // Liberar la memoria
     free(A);

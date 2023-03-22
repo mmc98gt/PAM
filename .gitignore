@@ -5,3 +5,13 @@
 *.cubin
 *.fatbin
 *.ods
+*.ods#
+*.md
+*.sln
+*.txt
+*.dll
+*.raw
+*.flow
+*.ppm
+*.bmp
+*.jpg

@@ -49,7 +49,6 @@ void multiply_matrices(double *A, double *B, double *C, int m, int n, int k, int
             for (int sub_k = 0; sub_k < k; sub_k += block_size)
             {
                 // Multiplicar el bloque de las matrices
-                printf("i %d j %d sub k %d \n",i,j,sub_k);
                 multiply_block(A, B, C, m, n, k, i, j, sub_k, block_size);
             }
         }
